@@ -167,4 +167,14 @@ contract Raffle is VRFConsumerBaseV2Plus {
             revert Raffle__TransferFailed();
         }
     }
+
+    /* Getter functions */
+
+    function getRaffleState() external view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getPlayer(uint256 playerIdx) external view returns (address) {
+        return s_players[playerIdx];
+    }
 }
