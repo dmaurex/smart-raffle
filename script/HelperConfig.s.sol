@@ -3,6 +3,7 @@ pragma solidity 0.8.30;
 
 import {Script} from "forge-std/Script.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
+import {LinkToken} from "test/mocks/LinkToken.sol";
 
 abstract contract CodeConstants {
     // Chain config
@@ -25,6 +26,7 @@ contract HelperConfig is Script, CodeConstants {
         bytes32 keyHash;
         uint256 subscriptionId;
         uint32 callbackGasLimit;
+        address link;
     }
 
     NetworkConfig public localNetworkConfig;
@@ -55,7 +57,8 @@ contract HelperConfig is Script, CodeConstants {
             vrfCoordinator: 0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625,
             keyHash: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c,
             callbackGasLimit: 500_000, // 500,000 gas
-            subscriptionId: 0 // should lead to automatic creation of a subscription
+            subscriptionId: 0, // 0 -> leads to automatic creation of a subscription
+            link: 0x779877A7B0D9E8603169DdbD7836e478b4624789
         });
     }
 
@@ -68,6 +71,7 @@ contract HelperConfig is Script, CodeConstants {
         vm.startBroadcast();
         VRFCoordinatorV2_5Mock vrfCoordinatorMock =
             new VRFCoordinatorV2_5Mock(MOCK_BASE_FEE, MOCK_GAS_PRICE_LINK, MOCK_WEI_PER_UNIT_LINK);
+        LinkToken linkToken = new LinkToken();
         vm.stopBroadcast();
 
         return NetworkConfig({
@@ -76,7 +80,8 @@ contract HelperConfig is Script, CodeConstants {
             vrfCoordinator: address(vrfCoordinatorMock),
             keyHash: 0x0, // irrelevant
             callbackGasLimit: 500_000, // 500,000 gas
-            subscriptionId: 0 // should lead to automatic creation of a subscription
+            subscriptionId: 0, // 0 -> leads to automatic creation of a subscription
+            link: address(linkToken)
         });
     }
 }
