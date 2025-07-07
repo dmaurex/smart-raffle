@@ -3,12 +3,12 @@ pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {DeployRaffle} from "script/DeployRaffle.s.sol";
-import {HelperConfig} from "script/HelperConfig.s.sol";
+import {HelperConfig, CodeConstants} from "script/HelperConfig.s.sol";
 import {Raffle} from "src/Raffle.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 
-contract RaffleTest is Test {
+contract RaffleTest is Test, CodeConstants {
     Raffle public raffle;
     HelperConfig helperConfig;
 
@@ -163,7 +163,9 @@ contract RaffleTest is Test {
     function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public {
         // Arrange
         uint256 numPlayers = 0;
-        uint256 currentBalance = 0;
+        // On fork test raffle contract might already exist at the address(raffle)
+        // Then, balance might not be 0. Thus, do not initialize variable with 0!
+        uint256 currentBalance = address(raffle).balance; // not necessarily 0
         Raffle.RaffleState raffleState = raffle.getRaffleState();
 
         vm.prank(PLAYER);
@@ -197,7 +199,18 @@ contract RaffleTest is Test {
 
     /* Test fullfilRandomWords */
 
-    function testFullfilRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEntered {
+    modifier skipFork() {
+        if (block.chainid != LOCAL_CHAIN_ID) {
+            return;
+        }
+        _;
+    }
+
+    function testFullfilRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId)
+        public
+        skipFork // because VRF coordinator cannot be impersonated by calling fullfilRandomWords
+        raffleEntered
+    {
         // Arrange (-> modifier)
         // Act + Assert
         vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
@@ -205,7 +218,11 @@ contract RaffleTest is Test {
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(randomRequestId, address(raffle));
     }
 
-    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered {
+    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney()
+        public
+        skipFork // because VRF coordinator cannot be impersonated by calling fullfilRandomWords
+        raffleEntered
+    {
         // Arrange: Let 3 more players enter the raffle (1st entered through the modifier)
         uint256 additionalPlayers = 3; // 4 total
         uint256 startingIdx = 1;
