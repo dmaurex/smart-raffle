@@ -12,8 +12,7 @@ abstract contract CodeConstants {
     // VRF mock values
     uint96 public MOCK_BASE_FEE = 0.25 ether;
     uint96 public MOCK_GAS_PRICE_LINK = 1e9;
-    // LINK / ETH price
-    int256 public MOCK_WEI_PER_UNIT_LINK = 4e15;
+    int256 public MOCK_WEI_PER_UNIT_LINK = 4e15; // LINK / ETH price
 }
 
 contract HelperConfig is Script, CodeConstants {
@@ -74,7 +73,7 @@ contract HelperConfig is Script, CodeConstants {
         LinkToken linkToken = new LinkToken();
         vm.stopBroadcast();
 
-        return NetworkConfig({
+        localNetworkConfig = NetworkConfig({
             entranceFee: 1e16, // 0.01 ether
             interval: 30, // 30 seconds
             vrfCoordinator: address(vrfCoordinatorMock),
@@ -83,5 +82,6 @@ contract HelperConfig is Script, CodeConstants {
             subscriptionId: 0, // 0 -> leads to automatic creation of a subscription
             link: address(linkToken)
         });
+        return localNetworkConfig;
     }
 }

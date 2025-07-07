@@ -48,7 +48,7 @@ contract FundSubscription is Script, CodeConstants {
 
         if (block.chainid == LOCAL_CHAIN_ID) {
             vm.startBroadcast();
-            VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(subscriptionId, FUND_AMOUNT);
+            VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(subscriptionId, FUND_AMOUNT * 100); // * 100 to fix InsufficientBalance() error
             vm.stopBroadcast();
         } else {
             vm.startBroadcast();
@@ -70,7 +70,7 @@ contract AddConsumer is Script {
         addConsumer(mostRecentlyDeployed, vrfCoordinator, subId);
     }
 
-    function addConsumer(address contractToAddToVrf, address vrfCoordinator, uint subId) public {
+    function addConsumer(address contractToAddToVrf, address vrfCoordinator, uint256 subId) public {
         console.log("Adding consumer contract: ", contractToAddToVrf);
         console.log("To vrfCoordinator: ", vrfCoordinator);
         console.log("On chain ID: ", block.chainid);

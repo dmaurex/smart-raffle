@@ -56,15 +56,14 @@ contract Raffle is VRFConsumerBaseV2Plus {
     bytes32 private immutable i_keyHash; // gas lane
     uint256 private immutable i_subscriptionId;
     uint32 private immutable i_callbackGasLimit;
-    address payable[] private s_players;
+    address payable[] private s_players; // no mapping -> players can enter multiple times
     uint256 private s_lastTimeStamp;
     address private s_recentWinner;
     RaffleState private s_raffleState;
 
     event RaffleEntered(address indexed player);
-    event RequestSent(uint256 requestId, uint32 numWords);
-    event RequestFulfilled(uint256 requestId, uint256[] randomWords);
     event WinnerPicked(address indexed winner);
+    event RequestedRaffleWinner(uint256 indexed requestId);
 
     constructor(
         uint256 entranceFee,
@@ -136,7 +135,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
         }
         s_raffleState = RaffleState.CALCULATING; // TODO: emit event?
         // Make request for random number
-        s_vrfCoordinator.requestRandomWords(
+        uint256 requestId = s_vrfCoordinator.requestRandomWords(
             VRFV2PlusClient.RandomWordsRequest({
                 keyHash: i_keyHash,
                 subId: i_subscriptionId,
@@ -147,6 +146,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
                 extraArgs: VRFV2PlusClient._argsToBytes(VRFV2PlusClient.ExtraArgsV1({nativePayment: false})) // TODO: set to true?
             })
         );
+        // Actually redundant because vrfCoordinator will also emit an event with the requestId
+        // but doing it here simplifies testing
+        emit RequestedRaffleWinner(requestId);
     }
 
     // Callback VRF function that picks a winner and transfers the prize
@@ -176,5 +178,13 @@ contract Raffle is VRFConsumerBaseV2Plus {
 
     function getPlayer(uint256 playerIdx) external view returns (address) {
         return s_players[playerIdx];
+    }
+
+    function getLastTimeStamp() external view returns (uint256) {
+        return s_lastTimeStamp;
+    }
+
+    function getRecentWinner() external view returns (address) {
+        return s_recentWinner;
     }
 }
