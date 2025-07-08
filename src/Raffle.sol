@@ -1,28 +1,12 @@
-// Layout of the contract file:
-// version
-// imports
-// errors
-// interfaces, libraries, contract
-
-// Inside Contract:
-// Type declarations
-// State variables
-// Events
-// Modifiers
-// Functions
-
-// Layout of Functions:
-// constructor
-// receive function (if exists)
-// fallback function (if exists)
-// external
-// public
-// internal
-// private
-
-// view & pure functions
-
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
+
+/*
+    This file is part of a code-along project based on the Foundry Fundamentals course by Cyfrin
+    found at https://updraft.cyfrin.io/courses/foundry.
+    This project is derivative work and licensed under the same GNU General Public License v3.0.
+    You may obtain a copy of the License at https://www.gnu.org/licenses/gpl-3.0.html
+*/
+
 pragma solidity 0.8.30;
 
 import {VRFConsumerBaseV2Plus} from "@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus.sol";
@@ -188,3 +172,27 @@ contract Raffle is VRFConsumerBaseV2Plus {
         return s_recentWinner;
     }
 }
+
+// Layout of the contract file:
+// version
+// imports
+// errors
+// interfaces, libraries, contract
+
+// Inside Contract:
+// Type declarations
+// State variables
+// Events
+// Modifiers
+// Functions
+
+// Layout of Functions:
+// constructor
+// receive function (if exists)
+// fallback function (if exists)
+// external
+// public
+// internal
+// private
+
+// view & pure functions
