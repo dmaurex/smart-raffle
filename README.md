@@ -54,10 +54,8 @@ ETHERSCAN_API_KEY=...
 Install dependencies and build the contracts:
 
 ```shell
-$ make install
 $ make build
 ```
-
 
 ### 4. Run Tests 📝
 Run tests locally:
@@ -116,6 +114,8 @@ $ cast send <RAFFLE_CONTRACT_ADDRESS> "enterRaffle()" \
   --private-key <PRIVATE_KEY> \
   --rpc-url $SEPOLIA_RPC_URL
 ```
+
+---
 
 ## 📂 Project Structure
 The repository follows the usual Foundry folder structure:

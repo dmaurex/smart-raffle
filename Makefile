@@ -11,7 +11,7 @@ test :; forge test
 
 test-sepolia :; forge test --fork-url $(SEPOLIA_RPC_URL) -v
 
-install:
+install: # forge has already registered these dependencies and installs them when building
 	forge install smartcontractkit/chainlink-brownie-contracts@1.3.0 \
 	&& forge install transmissions11/solmate@v6 \
 	&& forge install Cyfrin/foundry-devops@0.4.0
